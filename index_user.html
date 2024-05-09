@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoGuardian - Inicio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1030;
+            transition: background-color 0.5s ease-in-out;
+            height: 90px;
+            padding: 0 10%;
+            background-color: transparent;
+            font-weight: bold;
+        }
+        .navbar.solid {
+            background-color: white;
+            font-weight: bold;
+        }
+        .navbar.solid .nav-link, .navbar.solid .navbar-brand {
+            font-weight: bold;
+            color: black;
+        }
+        .navbar.solid .nav-link:hover {
+            color: #adff2f;
+            font-weight: bold;
+        }
+        .profile-icon-btn {
+            display: flex;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-image: url('img/a.jpg');
+            background-size: cover;
+            background-position: center;
+            align-items: center;
+            justify-content: center;
+            border: none;
+        }
+        .navbar-nav {
+            align-items: center;
+            margin-right: 100px;
+        }
+        #section1 {
+            background: url('img/fondo.jpg') no-repeat center center fixed;
+            background-size: cover;
+            height: 720px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding-top: 112px;            
+        }
+        #section2 {
+            display: flex;
+            height: 550px;
+        }
+        #section2 > div {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            background-size: cover;
+        }
+        #section2 > div:first-child {
+            background: #adff2f;
+        }
+        #section2 > div:last-child {
+            background: url('path_to_vision_background.jpg') no-repeat center center fixed;
+        }
+        #section3 {
+            background: white;
+            padding: 40px 0;
+        }
+        .news-card:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease-in-out;
+        }
+        .btn-news {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+        .btn-news:hover {
+            background-color: #9ace25;
+        }
+        footer {
+            width: 100%;
+            text-align: center;            
+            padding: 20px 0;
+            margin-top: 20px;
+            background-color: rgb(156, 156, 156);
+        }
+        .footer-text {
+            margin: 5px 0;
+        }
+        .dropdown-menu {
+            width: 320px; /* Tamaño del desplegable */
+            min-height: 260px;
+        }
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 45px; /* Alineación con el botón de perfil */
+            border: 10px solid transparent;
+            border-bottom-color: white;
+        }
+        .dropdown-header {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+        }
+        .notification-card {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .notification-card .user-icon {
+            width: 40px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #bbb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        .notification-card strong {
+            font-weight: bold;
+        }
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+        }
+        .custom-spacing {
+            margin-right: 50px;
+            margin-left: 50px;
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar navbar-expand-lg navbar-dark fixed-top solid">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index_user.html">EcoGuardian</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index_user.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="foro_user.html">Foro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="catalogo_user.html">Catálogo</a>
+                    </li>
+                    <li class="nav-item me-5">
+                        <a class="nav-link" href="noticias_user.html">Noticias</a>
+                    </li>                    
+                    <li class="nav-item dropdown">
+                        <button class="profile-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <!-- Profile icon image here -->
+                        </button>                        
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <li class="dropdown-header">Grupo 4</li>
+                            <li><a class="dropdown-item">Notificaciones</a></li>
+                            <div class="notification-card">
+                                <div class="user-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <p><strong>Juan Luján</strong> respondió a tu comentario en el foro.</p>
+                            </div>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" style="background-color: rgba(224, 12, 12, 0.795);" type="button" href="index.html">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section id="section1">
+            <h1>ECOGUARDIAN</h1>
+            <p>Protegiendo Nuestra Vida, Preservando Nuestro Futuro</p>
+        </section>
+        <section id="section2" style="background: url('img/bosque.jpg') no-repeat center center fixed; background-size: cover;">
+            <div class="container">
+                <div class="row justify-content-center align-items-center" style="height: 350px;">
+                    <div class="col-md-4 text-center mx-5">
+                        <h3>MISIÓN</h3>
+                        <p>Fomentar la conciencia y acción ambiental en Perú mediante la difusión de información vital sobre la conservación del medio ambiente y la protección de las especies en peligro de extinción en nuestro país. Nos comprometemos a proporcionar datos precisos y actualizados, investigaciones relevantes y recursos educativos para impulsar el compromiso ciudadano y político hacia la sostenibilidad y la biodiversidad peruana.</p>
+                    </div>
+                    <div class="col-md-4 text-center mx-5">
+                        <h3>VISIÓN</h3>
+                        <p>Ser un referente en Perú para la educación y acción ambiental, inspirando a individuos, comunidades y líderes a tomar medidas concretas para la conservación de nuestros ecosistemas únicos y la protección de la fauna en riesgo. Aspiramos a un Perú donde la naturaleza y la humanidad prosperen juntas en un equilibrio sostenible, asegurando un legado de riqueza natural para las futuras generaciones.</p>
+                    </div>
+                </div>
+            </div>
+        </section>               
+        <section id="section3" class="container">
+            <h3 style="text-align: center; margin-bottom: 30px;">Últimas Noticias</h3>
+            <div class="row">
+                <!-- News card -->
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card news-card">
+                        <img src="img_noticias/noticia1.png" class="card-img-top" alt="Noticia 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Descubren nueva especie de tigrillo silvestre que habita en América Latina</h5>
+                            <p class="card-text">La presencia del tigrillo silvestre Leopardus pardinoides se extiende por diversas regiones de América Latina, siendo Colombia el país con mayor concentración de esta especie.</p>
+                            <a href="noticia_user1.html" class="btn btn-news">Ver Noticia</a>
+                        </div>                   
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card news-card">
+                        <img src="img_noticias/noticia2.jpg" class="card-img-top" alt="Noticia 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Ministro Juan Carlos Castro: obra de infraestructura disposición final de residuos tienen un avance de 73% para la provincia de Trujillo</h5>
+                            <p class="card-text">En las próximas semanas, se conformará mesa técnica para abordar los aspectos ambientales de Trujillo.</p>
+                            <a href="noticia_user2.html" class="btn btn-news">Ver Noticia</a>
+                        </div>                   
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card news-card">
+                        <img src="img_noticias/noticia3.jpeg" class="card-img-top" alt="Noticia 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Minam capacita a gobiernos regionales para mejorar la gestión presupuestal destinada a la conservación de los recursos naturales</h5>
+                            <p class="card-text">Para este 2024 se tiene previsto organizar 13 talleres en favor del uso sostenible de dichos ecosistemas.</p>
+                            <a href="noticia_user3.html" class="btn btn-news">Ver Noticia</a>
+                        </div>                   
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3 mb-4">
+                    <div class="card news-card">
+                        <img src="img_noticias/noticia4.png" class="card-img-top" alt="Noticia 1">
+                        <div class="card-body">
+                            <h5 class="card-title">Después de casi 40 años encuentran en Ayacucho nido de especie milenaria en peligro de extinción</h5>
+                            <p class="card-text">El investigador Víctor Gamarra Toledo, mencionó que es la primera vez que se encuentra un nido de esta especie en el sur de Ayacucho.</p>
+                            <a href="noticia_user4.html" class="btn btn-news">Ver Noticia</a>
+                        </div>                   
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="text-center mt-4 mb-4">
+        <p class="footer-text">EcoGuardian</p>
+        <p class="footer-text">Dirección: Av. América Sur 3145, Trujillo, La Libertad, Perú</p>
+        <p class="footer-text">Email de contacto: ecoguardian@upao.edu.pe</p>
+        <p class="footer-text">Horario de atención: Lunes a viernes, de 9:00 am a 17:00 pm</p>
+        <br>
+        <p class="footer-text">Todos los derechos reservados ©2024</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(() => {
+                var header = document.querySelector("header");
+                header.classList.remove("solid");
+                header.classList.add("transparent");
+            }, 500); // Delay the transition to transparent
+        });
+
+        document.addEventListener("scroll", function() {
+            var header = document.querySelector("header");
+            if (window.scrollY > 50) {
+                header.classList.remove("transparent");
+                header.classList.add("solid");
+            } else {
+                header.classList.add("transparent");
+                header.classList.remove("solid");
+            }
+        });
+    </script>
+</body>
+</html>

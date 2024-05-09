@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de Noticia - EcoGuardian</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>    
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1030;
+            transition: background-color 0.5s ease-in-out;
+            height: 90px;
+            padding: 0 10%;
+            background-color: transparent;
+            background: url('img/fondo.jpg') no-repeat center center fixed;
+            font-weight: bold;
+        }
+        .navbar.solid {
+            background-color: white;
+        }
+        .navbar.solid .nav-link, .navbar.solid .navbar-brand {
+            color: white;
+        }
+        .navbar.solid .nav-link:hover {
+            color: #adff2f;
+        }
+        .profile-icon-btn {
+            display: flex;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-image: url('img/a.jpg');
+            background-size: cover;
+            background-position: center;
+            align-items: center;
+            justify-content: center;
+            border: none;
+        }
+        .navbar-nav {
+            align-items: center;
+            margin-right: 100px;
+        }
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px; /* Aumentado el margen superior */
+            background-color: rgb(156, 156, 156);
+        }
+        .footer-text {
+            margin: 5px 0;
+        }
+        .btn-signin {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-signin:hover {
+            background-color: #45a049;
+        }
+        .custom-spacing {
+            margin-right: 50px;
+            margin-left: 50px;
+        }
+        .dropdown-menu {
+            width: 320px;
+            min-height: 260px;
+        }
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 45px;
+            border: 10px solid transparent;
+            border-bottom-color: white;
+        }
+        .dropdown-header {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+        }
+        .notification-card {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .notification-card .user-icon {
+            width: 40px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #bbb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        .notification-card strong {
+            font-weight: bold;
+        }
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+        }
+        .media-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .media-content {
+            display: flex;
+            align-items: high;
+        }
+        .media-description {
+            margin-left: 20px;
+        }
+        .img-fluid {
+            max-width: 100%;
+            height: auto;
+        }
+        .btn-back {
+            margin-top: 20px;
+        }
+        .mt-5.pt-5 {
+            padding-top: 80px !important; /* Asegura suficiente espacio arriba debido al header fijo */
+        }
+        .container {
+            margin-top: 100px; /* Espacio adicional entre navbar y contenido */
+            margin-bottom: 40px; /* Espacio adicional entre contenido y footer */
+        }
+        .download-btn {
+            width: 35px;
+            height: 35px; 
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar navbar-expand-lg navbar-dark fixed-top solid">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index_user.html">EcoGuardian</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index_user.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="foro_user.html">Foro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="catalogo_user.html">Catálogo</a>
+                    </li>
+                    <li class="nav-item me-5">
+                        <a class="nav-link active" href="noticias_user.html">Noticias</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <button class="profile-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <li class="dropdown-header">Grupo 4</li>
+                            <li><a class="dropdown-item">Notificaciones</a></li>
+                            <div class="notification-card">
+                                <div class="user-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <p><strong>Juan Luján</strong> respondió a tu comentario en el foro.</p>
+                            </div>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" style="background-color: rgba(224, 12, 12, 0.795);" type="button" href="index.html">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <main class="container mt-5 pt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="flex-grow-1">Día Internacional de la Tierra: campaña "Menos plástico, más vida" será todo el año</h1>
+            <button class="btn btn-primary download-btn" onclick="downloadPDF()">
+                <i class="fas fa-download"></i>
+            </button>
+        </div>
+        <div id="content-to-download">
+            <!-- Contenido existente -->
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="img_noticias/noticia6.jpg" alt="Imagen de la Noticia" class="img-fluid">
+                    <p class="text-muted">Habitantes de una comunidad les proporcionaron información sobre la ubicación del nido. Foto: composición de Fabrizio Oviedo/La República.</p>
+                    <p class="text-muted">Publicado el: 22-05-2024</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Ministro del Ambiente, Juan Carlos Castro Vargas, subrayó que la campaña es de manera permanente, con el objetivo de eliminar el plástico de un solo uso.</h5><br>
+                    <p>En el contexto del Día Internacional de la Tierra, que se celebra el 22 de abril, el ministro del Ambiente, Juan Carlos Castro Vargas, subrayó que ha puesto en marcha la campaña "Menos plástico, más vida", que es a escala nacional y de manera permanente, es decir su vigencia es todo el año, con el objetivo de eliminar el plástico de un solo uso.</p>
+                    <p>El titular del Minam refirió que la situación es grave, porque el mundo produce anualmente alrededor de 400 millones de toneladas de residuos sólidos; mientras en el Perú la cifra es 1.2 millones de toneladas al año, de allí la importancia de la campaña del Ministerio del Ambiente.</p>
+                    <p>El titular del Minam dijo que desde que se promulgó la Ley 3084 en el año 2018 a la fecha, ha habido un cambio sustancial e importante de casi el 80% en promedio de la reducción del plástico de un solo uso.</p>
+                    <p>En el contexto del Día Internacional de la Tierra, que se celebra el 22 de abril, el ministro del Ambiente, Juan Carlos Castro Vargas, subrayó que ha puesto en marcha la campaña "Menos plástico, más vida", que es a escala nacional y de manera permanente, es decir su vigencia es todo el año, con el objetivo de eliminar el plástico de un solo uso.</p>
+                    <p>El titular del Minam refirió que la situación es grave, porque el mundo produce anualmente alrededor de 400 millones de toneladas de residuos sólidos; mientras en el Perú la cifra es 1.2 millones de toneladas al año, de allí la importancia de la campaña del Ministerio del Ambiente.</p>
+                    <p>El titular del Minam dijo que desde que se promulgó la Ley 3084 en el año 2018 a la fecha, ha habido un cambio sustancial e importante de casi el 80% en promedio de la reducción del plástico de un solo uso.</p>
+                    <p>También mencionó entre los productos, los platos de tecnopor, sorbetes y cubiertos plásticos "que solo se usan una vez y de allí no los vemos más".</p>
+                    <p>"Hemos reducido ese porcentaje (del uso de productos plásticos de un solo uso), pero necesitamos crear mayor conciencia nacional en el sentido de que podamos migrar a otros mecanismos, otros sistemas más alternativos o volver a la bolsa de tela, a los coches de tela, las canastas", expresó Castro Vargas.</p>
+                    <p>Aseveró que falta una campaña más agresiva y que por eso su sector ha puesto de manera permanente la campaña "Menos plástico, más vida".</p>
+                    <p>En ese aspecto, dijo que se está trabajando con los alcaldes, que son claves para la campaña, como viene ocurriendo en los distritos de Santa Anita y Surquillo donde los comerciantes ya no están entregando bolsas de plástico.</p>
+                    <p>"Están promoviendo en los compradores el uso de bolsas de tela con buenos resultados", declaró el ministro al anunciar que la campaña será a escala nivel nacional.</p>
+                    <p>El titular del Minam anunció que hay supermercados interesados en la campaña y se firmarán convenios próximamente para reducir la entrega de bolsas de plástico.</p><br>
+                    <h5>Cuidar la tierra</h5><br>
+                    <p>De otro lado, el ministro Castro Vargas sostuvo que es necesario recordar, en el Día Internacional de la Tierra, "que no tenemos otra casa, no tenemos otro planeta más que este y hay que cuidarlo, lo cual implica comenzar a mirar nuestro ambiente de una manera más responsable".</p>
+                    <p>"Cuidar nuestros océanos, ríos, suelos, bosques y mejorar la calidad ambiental en general es clave y desde la ciudadanía es importante que asumamos un rol sumamente responsable", remarcó en declaraciones a RPP Noticias.</p>
+                    <p>Sobre la contaminación remarcó que el tema de los plásticos es grave y en muchos países ya hay problemas con microplásticos en el tejido de los peces y en algunos casos hay microplásticos ya en el agua que se consumen en las botellas.</p>
+                    <p>"Nosotros como país no podemos esperar llegar a ese momento para poder tomar acciones y desde ahora estamos tomando medidas porque hay que crear junto a las autoridades y a la ciudadanía, una conciencia para proteger nuestro ambiente y migrar hacia un  consumo responsable, de tal manera que le damos un respiro a nuestro planeta", finalizó. (Fuente: Andina)</p>
+                </div>
+            </div>
+        </div>        
+        <button onclick="window.history.back();" class="btn btn-primary btn-back">Volver</button>
+    </main>
+    <footer class="text-center mt-4 mb-4">
+        <p class="footer-text">EcoGuardian</p>
+        <p class="footer-text">Dirección: Av. América Sur 3145, Trujillo, La Libertad, Perú</p>
+        <p class="footer-text">Email de contacto: ecoguardian@upao.edu.pe</p>
+        <p class="footer-text">Horario de atención: Lunes a viernes, de 9:00 am a 17:00 pm</p>
+        <br>
+        <p class="footer-text">Todos los derechos reservados ©2024</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(() => {
+                var header = document.querySelector("header");
+                header.classList.remove("solid");
+                header.classList.add("transparent");
+            }, 500);
+        });
+
+        document.addEventListener("scroll", function() {
+            var header = document.querySelector("header");
+            if (window.scrollY > 50) {
+                header.classList.remove("transparent");
+                header.classList.add("solid");
+            } else {
+                header.classList.add("transparent");
+                header.classList.remove("solid");
+            }
+        });
+        function downloadPDF() {
+        html2canvas(document.getElementById('content-to-download'), {
+            useCORS: true,
+            onclone: (document) => {
+                let imgs = document.getElementsByTagName('img');
+                for (let img of imgs) {
+                    img.setAttribute('crossOrigin', 'anonymous');
+                }
+            }            
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new window.jspdf.jsPDF({
+                orientation: 'portrait',
+                unit: 'px',
+                format: [canvas.width, canvas.height]
+            });
+            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+            pdf.save('detalle-especie.pdf');
+        }).catch(err => {
+            console.error("Error al generar el PDF: ", err);
+        });
+    }
+    </script>
+</body>
+</html>
