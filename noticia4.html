@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticia - EcoGuardian</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>    
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1030;
+            transition: background-color 0.5s ease-in-out;
+            height: 90px;
+            padding: 0 10%;
+            background-color: transparent;
+            background: url('img/fondo.jpg') no-repeat center center fixed;
+            font-weight: bold;
+        }
+        .navbar.solid {
+            background-color: white;
+        }
+        .navbar.solid .nav-link, .navbar.solid .navbar-brand {
+            color: white;
+        }
+        .navbar.solid .nav-link:hover {
+            color: #adff2f;
+        }
+        .navbar-nav {
+            align-items: center;
+            margin-right: 100px;
+        }
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px; /* Aumentado el margen superior */
+            background-color: rgb(156, 156, 156);
+        }
+        .footer-text {
+            margin: 5px 0;
+        }
+        .btn-signin {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-signin:hover {
+            background-color: #45a049;
+        }
+        .custom-spacing {
+            margin-right: 50px;
+            margin-left: 50px;
+        }
+        .dropdown-menu {
+            width: 320px;
+            min-height: 260px;
+        }
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 45px;
+            border: 10px solid transparent;
+            border-bottom-color: white;
+        }
+        .dropdown-header {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+        }
+        .notification-card {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .notification-card .user-icon {
+            width: 40px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #bbb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        .notification-card strong {
+            font-weight: bold;
+        }
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+        }
+        .media-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .media-content {
+            display: flex;
+            align-items: high;
+        }
+        .media-description {
+            margin-left: 20px;
+        }
+        .img-fluid {
+            max-width: 100%;
+            height: auto;
+        }
+        .btn-back {
+            margin-top: 20px;
+        }
+        .mt-5.pt-5 {
+            padding-top: 80px !important; /* Asegura suficiente espacio arriba debido al header fijo */
+        }
+        .container {
+            margin-top: 100px; /* Espacio adicional entre navbar y contenido */
+            margin-bottom: 40px; /* Espacio adicional entre contenido y footer */
+        }
+        .download-btn {
+            width: 35px;
+            height: 35px; 
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">EcoGuardian</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Inicio</a>
+                    </li>
+                    <li class="nav-item me-5">
+                        <a class="nav-link" href="catalogo.html">Catálogo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-signin" href="iniciar_sesion.html" role="button">Iniciar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <main class="container mt-5 pt-5">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="flex-grow-1">Después de casi 40 años encuentran en Ayacucho nido de especie milenaria en peligro de extinción</h1>
+            <button class="btn btn-primary download-btn" onclick="downloadPDF()">
+                <i class="fas fa-download"></i>
+            </button>
+        </div>
+        <div id="content-to-download">
+            <!-- Contenido existente -->
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="img_noticias/noticia4.png" alt="Imagen de la Noticia" class="img-fluid">
+                    <p class="text-muted">Habitantes de una comunidad les proporcionaron información sobre la ubicación del nido. Foto: composición de Fabrizio Oviedo/La República.</p>
+                    <p class="text-muted">Publicado el: 01-05-2024</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>El investigador Víctor Gamarra Toledo, de la Universidad Nacional de San Agustín de Arequipa, mencionó que es la primera vez que se encuentra un nido de esta especie en el sur de Ayacucho.</h5><br>
+                    <p>En la reserva nacional Pampa Galeras Barbara D’Achille, ubicada en la provincia de Lucanas, región Ayacucho, se hizo un descubrimiento científico significativo después de 40 años. Se trata del hallazgo de un nido de cóndor andino, una especie milenaria en peligro de extinción. Víctor Gamarra Toledo, biólogo investigador en el campo de la ornitología del Museo de Historia Natural (MUSA) de la Universidad Nacional de San Agustín de Arequipa, mencionó que es la primera vez que se encuentra un nido de esta especie en esta zona del país.</p><br>
+                    <h5>Ayacucho: ¿cómo encontraron este nido de especie milenaria en peligro de extinción después de 40 años?</h5><br>
+                    <p>En diciembre de 2023, Gamarra Toledo y su equipo de investigadores del museo llevaron a cabo una expedición de un mes que les permitió explorar el corredor biológico natural desde Pampa Galeras hasta la reserva nacional San Fernando, en Ica. Este corredor biológico es un área natural que conecta la región andina con la costa.</p>
+                    <p>El propósito de esta labor fue localizar cóndores para equiparlos con radiotransmisores como parte de una investigación que facilita el seguimiento del movimiento de estas especies.</p>
+                    <p>También mencionó que, durante la expedición, exploraron las áreas donde los cóndores podrían estar descansando durante la noche, después de llegar a una comunidad campesina ubicada a 2.800 metros sobre el nivel del mar. Los habitantes de esta comunidad les proporcionaron información sobre la ubicación del nido.</p>
+                    <p>“En medio de una pared de roca, se pudo observar a un cóndor alimentando a su pequeña cría. El polluelo aún tenía sus plumas gris oscuras. Se le notaba indefenso, dependiente de sus padres, como ocurre con esta especie, que vive por lo menos durante un año y medio al cuidado de sus progenitores”, describió el especialista.</p><br>
+                    <h5>Ayacucho: ¿en qué aportará el hallazgo del nido del cóndor andino?</h5><br>
+                    <p>Además, señaló que el descubrimiento de este nido proporcionará información adicional sobre el cuidado parental, la biología reproductiva de la pareja de cóndores y los esfuerzos de conservación. Destacó que, actualmente, el monitoreo se lleva a cabo con la colaboración de los residentes locales, quienes participan activamente en todo el proceso.</p>
+                </div>
+            </div>
+        </div>        
+        <button onclick="window.history.back();" class="btn btn-primary btn-back">Volver</button>
+    </main>
+    <footer class="text-center mt-4 mb-4">
+        <p class="footer-text">EcoGuardian</p>
+        <p class="footer-text">Dirección: Av. América Sur 3145, Trujillo, La Libertad, Perú</p>
+        <p class="footer-text">Email de contacto: ecoguardian@upao.edu.pe</p>
+        <p class="footer-text">Horario de atención: Lunes a viernes, de 9:00 am a 17:00 pm</p>
+        <br>
+        <p class="footer-text">Todos los derechos reservados ©2024</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(() => {
+                var header = document.querySelector("header");
+                header.classList.remove("solid");
+                header.classList.add("transparent");
+            }, 500);
+        });
+
+        document.addEventListener("scroll", function() {
+            var header = document.querySelector("header");
+            if (window.scrollY > 50) {
+                header.classList.remove("transparent");
+                header.classList.add("solid");
+            } else {
+                header.classList.add("transparent");
+                header.classList.remove("solid");
+            }
+        });
+        function downloadPDF() {
+        html2canvas(document.getElementById('content-to-download'), {
+            useCORS: true,
+            onclone: (document) => {
+                let imgs = document.getElementsByTagName('img');
+                for (let img of imgs) {
+                    img.setAttribute('crossOrigin', 'anonymous');
+                }
+            }            
+        }).then(canvas => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new window.jspdf.jsPDF({
+                orientation: 'portrait',
+                unit: 'px',
+                format: [canvas.width, canvas.height]
+            });
+            pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+            pdf.save('detalle-especie.pdf');
+        }).catch(err => {
+            console.error("Error al generar el PDF: ", err);
+        });
+    }
+    </script>
+</body>
+</html>

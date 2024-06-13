@@ -1,0 +1,3812 @@
+@charset "UTF-8";
+/* ------------------------------------------------------------ */
+/* ------------------------ Global Vars ----------------------- */
+/* ------------------------------------------------------------ */
+/* 3 * 33, to near 100% */
+/* ------------------------------------------------------------ */
+/* -------------------------- Main UI ------------------------- */
+/* ------------------------------------------------------------ */
+body {
+  background: black;
+  position: relative;
+  margin: 0;
+  min-height: 100dvh;
+  overflow: hidden;
+  --gecko-transition-delay: 0s;
+  --gecko-transition-duration: 0.125s;
+  cursor: none;
+}
+
+.svg-defs {
+  width: 0;
+  height: 0;
+  position: fixed;
+}
+
+.fullscreen {
+  position: absolute;
+  inset: 0 0 0 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100dvh;
+}
+
+/* ---------------------------- SCREENS -------------------------- */
+.start-screen {
+  z-index: 999;
+  background: black;
+  animation: start-screen-fade-out 3s ease-out forwards;
+}
+@keyframes start-screen-fade-out {
+  0% {
+    scale: 10;
+    opacity: 1;
+    color: black;
+  }
+  66.67% {
+    scale: 1;
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    scale: 1;
+    color: white;
+  }
+}
+
+.welcome-screen {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  opacity: 0;
+  transform: scale(1.025);
+  animation: enter-text 0.5s ease-out forwards 1s;
+  z-index: 999999999;
+  /* ---------------- input-device-specific word choice ---------------- */
+}
+@keyframes enter-text {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.welcome-screen h1,
+.welcome-screen h2 {
+  margin: 1vmin;
+  text-shadow: 0 0 2vmin #125d19, 0 0 0.75vmin #072a17;
+  color: white;
+}
+.welcome-screen h1 {
+  font-size: min(5dvmin, 2rem);
+}
+.welcome-screen h2 {
+  font-size: min(10dvmin, 4rem);
+  font-weight: 900;
+}
+.welcome-screen h2::before {
+  content: "⧼";
+}
+.welcome-screen h2::after {
+  content: "⧽";
+  margin-left: 0.25rem;
+}
+.welcome-screen .touch,
+.welcome-screen .hover,
+.welcome-screen .tab-only {
+  display: none;
+}
+@media (hover: none) and (pointer: coarse) {
+  .welcome-screen {
+    /* Styles for touch devices */
+  }
+  .welcome-screen .touch {
+    display: block;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  .welcome-screen {
+    /* Styles for devices with accurate pointing devices like a mouse or stylus */
+  }
+  .welcome-screen .hover {
+    display: block;
+  }
+}
+@media (hover: none) and (pointer: none) {
+  .welcome-screen {
+    /* Styles for devices that might rely on tab-only navigation */
+  }
+  .welcome-screen .tab-only {
+    display: block;
+  }
+}
+body:hover .welcome-screen {
+  display: none;
+}
+
+/* ------------------------ MAIN UI: Tip component ------------------------ */
+.tip-wrapper {
+  left: 50%;
+  z-index: 9999999;
+  background: #ffd994;
+  position: fixed;
+  bottom: 2.5dvh;
+  padding: 0;
+  margin: 0;
+  font-size: 1em;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 0.75em 1em rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transition: all 0.125s ease-out, opacity 0.0625s ease-out, bottom 0.125s ease-out 0.125s;
+  transform-origin: 50% 33%;
+  transform: translate(-50%, 25%);
+  animation: tip__fade-in 0.5s ease-out forwards 3s;
+  cursor: pointer;
+}
+body:not(:hover) .tip-wrapper {
+  display: none;
+}
+.tip-wrapper .hidden-checkbox {
+  display: none;
+}
+body:has(.tip-wrapper:hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 48;
+  --y: 93;
+}
+.tip-wrapper:active {
+  scale: 0.95;
+  opacity: 0;
+  animation: none;
+}
+.tip-wrapper:has(.hidden-checkbox:checked) {
+  bottom: -7.5dvh;
+  opacity: 0;
+  animation: none;
+}
+.tip-wrapper .tip {
+  display: flex;
+  align-items: stretch;
+}
+.tip-wrapper .tip::before {
+  content: "✕";
+  border-radius: 50%;
+  border: 2px solid orange;
+  color: orange;
+  position: absolute;
+  top: -0.75em;
+  right: -0.75em;
+  z-index: 1;
+  width: 1.25em;
+  height: 1.25em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  background: black;
+}
+.tip-wrapper .tip span {
+  display: block;
+  display: flex;
+  align-items: center;
+  height: 2.5em;
+  padding: 0 0.75em;
+  white-space: nowrap;
+}
+.tip-wrapper .tip span:first-child {
+  background: orange;
+  color: white;
+  border-radius: 4px 0 0 4px;
+}
+@keyframes tip__fade-in {
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ------------------------------------------------------------------- */
+/* ----------------------- Position Aware Grid ----------------------- */
+/* ------------------------------------------------------------------- */
+:root {
+  --x-axis: 33;
+  --y-axis: 33;
+  font-family: Lato, Helvetica, Arial, sans-serif;
+}
+
+.position-aware-container {
+  background: radial-gradient(circle at center, rgba(86, 135, 8, 0.625) 25%, rgba(10, 96, 16, 0.625) 60%, rgba(1, 29, 29, 0.75) 92.5%);
+}
+
+.position-aware-grid {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-rows: repeat(var(--y-axis), 1fr);
+  grid-template-columns: 1fr;
+  grid-gap: 0;
+  z-index: 99999;
+  transition: all 0.5s ease-out;
+}
+
+tr {
+  width: 100dvw;
+  height: calc(100dvh / var(--y-axis));
+  display: grid;
+  grid-template-columns: repeat(var(--x-axis), 1fr);
+}
+
+td {
+  position: relative;
+}
+td .gecko-attack-area {
+  display: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.position-aware-container:has(tr:nth-child(1):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 0;
+}
+
+.position-aware-container:has(td:nth-child(1):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 0;
+}
+
+.position-aware-container:has(tr:nth-child(2):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 3;
+}
+
+.position-aware-container:has(td:nth-child(2):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 3;
+}
+
+.position-aware-container:has(tr:nth-child(3):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 6;
+}
+
+.position-aware-container:has(td:nth-child(3):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 6;
+}
+
+.position-aware-container:has(tr:nth-child(4):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 9;
+}
+
+.position-aware-container:has(td:nth-child(4):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 9;
+}
+
+.position-aware-container:has(tr:nth-child(5):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 12;
+}
+
+.position-aware-container:has(td:nth-child(5):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 12;
+}
+
+.position-aware-container:has(tr:nth-child(6):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 15;
+}
+
+.position-aware-container:has(td:nth-child(6):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 15;
+}
+
+.position-aware-container:has(tr:nth-child(7):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 18;
+}
+
+.position-aware-container:has(td:nth-child(7):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 18;
+}
+
+.position-aware-container:has(tr:nth-child(8):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 21;
+}
+
+.position-aware-container:has(td:nth-child(8):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 21;
+}
+
+.position-aware-container:has(tr:nth-child(9):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 24;
+}
+
+.position-aware-container:has(td:nth-child(9):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 24;
+}
+
+.position-aware-container:has(tr:nth-child(10):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 27;
+}
+
+.position-aware-container:has(td:nth-child(10):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 27;
+}
+
+.position-aware-container:has(tr:nth-child(11):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 30;
+}
+
+.position-aware-container:has(td:nth-child(11):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 30;
+}
+
+.position-aware-container:has(tr:nth-child(12):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 33;
+}
+
+.position-aware-container:has(td:nth-child(12):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 33;
+}
+
+.position-aware-container:has(tr:nth-child(13):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 36;
+}
+
+.position-aware-container:has(td:nth-child(13):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 36;
+}
+
+.position-aware-container:has(tr:nth-child(14):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 39;
+}
+
+.position-aware-container:has(td:nth-child(14):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 39;
+}
+
+.position-aware-container:has(tr:nth-child(15):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 42;
+}
+
+.position-aware-container:has(td:nth-child(15):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 42;
+}
+
+.position-aware-container:has(tr:nth-child(16):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 45;
+}
+
+.position-aware-container:has(td:nth-child(16):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 45;
+}
+
+.position-aware-container:has(tr:nth-child(17):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 48;
+}
+
+.position-aware-container:has(td:nth-child(17):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 48;
+}
+
+.position-aware-container:has(tr:nth-child(18):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 51;
+}
+
+.position-aware-container:has(td:nth-child(18):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 51;
+}
+
+.position-aware-container:has(tr:nth-child(19):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 54;
+}
+
+.position-aware-container:has(td:nth-child(19):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 54;
+}
+
+.position-aware-container:has(tr:nth-child(20):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 57;
+}
+
+.position-aware-container:has(td:nth-child(20):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 57;
+}
+
+.position-aware-container:has(tr:nth-child(21):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 60;
+}
+
+.position-aware-container:has(td:nth-child(21):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 60;
+}
+
+.position-aware-container:has(tr:nth-child(22):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 63;
+}
+
+.position-aware-container:has(td:nth-child(22):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 63;
+}
+
+.position-aware-container:has(tr:nth-child(23):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 66;
+}
+
+.position-aware-container:has(td:nth-child(23):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 66;
+}
+
+.position-aware-container:has(tr:nth-child(24):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 69;
+}
+
+.position-aware-container:has(td:nth-child(24):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 69;
+}
+
+.position-aware-container:has(tr:nth-child(25):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 72;
+}
+
+.position-aware-container:has(td:nth-child(25):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 72;
+}
+
+.position-aware-container:has(tr:nth-child(26):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 75;
+}
+
+.position-aware-container:has(td:nth-child(26):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 75;
+}
+
+.position-aware-container:has(tr:nth-child(27):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 78;
+}
+
+.position-aware-container:has(td:nth-child(27):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 78;
+}
+
+.position-aware-container:has(tr:nth-child(28):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 81;
+}
+
+.position-aware-container:has(td:nth-child(28):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 81;
+}
+
+.position-aware-container:has(tr:nth-child(29):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 84;
+}
+
+.position-aware-container:has(td:nth-child(29):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 84;
+}
+
+.position-aware-container:has(tr:nth-child(30):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 87;
+}
+
+.position-aware-container:has(td:nth-child(30):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 87;
+}
+
+.position-aware-container:has(tr:nth-child(31):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 90;
+}
+
+.position-aware-container:has(td:nth-child(31):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 90;
+}
+
+.position-aware-container:has(tr:nth-child(32):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 93;
+}
+
+.position-aware-container:has(td:nth-child(32):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 93;
+}
+
+.position-aware-container:has(tr:nth-child(33):hover) :is(.fly__wrapper, .gecko__placement) {
+  --y: 96;
+}
+
+.position-aware-container:has(td:nth-child(33):hover) :is(.fly__wrapper, .gecko__placement) {
+  --x: 96;
+}
+
+/* ----------------------------------------------------------- */
+/* ------------------------ Creatures ------------------------ */
+/* ----------------------------------------------------------- */
+/* --------------------------- FLY --------------------------- */
+/* ----------- FLY: position aware flight mechanics ---------- */
+.fly__wrapper {
+  --x: 80;
+  --y: 130;
+  --wing-speed: 10;
+  --extra-rotation: 30deg;
+  position: absolute;
+  --fly-wrapper-width: calc(100 * var(--creature-unit) / var(--x-axis));
+  --fly-wrapper-height: calc(100 * var(--creature-unit) / var(--y-axis));
+  width: var(--fly-wrapper-width);
+  height: var(--fly-wrapper-height);
+  will-change: left, top, transform;
+  left: calc( 100dvw / (var(--x-axis) * 3) * var(--x) + 50dvw / var(--x-axis) - calc(var(--fly-wrapper-width) / 2) );
+  top: calc( 100dvh / (var(--y-axis) * 3) * var(--y) + 50dvh / var(--y-axis) - calc(var(--fly-wrapper-height) / 2) );
+  transform: rotate3d(0, 0, 1, calc( atan2(calc(var(--x) * 0.33 - 16), calc(16 - var(--y) * 0.33)) + var(--extra-rotation) ));
+  /* Math.floor(33/2) = 16 */
+  transform-origin: 50% 50%;
+  transition: all 0.25s ease-out;
+  pointer-events: none;
+  z-index: 4;
+  filter: drop-shadow(0 2px calc(var(--creature-unit) / 2.5) rgba(0, 0, 0, 0.25));
+}
+
+/* ----------------------- FLY: styles ----------------------- */
+.fly {
+  --fly-width: calc(var(--creature-unit) * 1.5);
+  --fly-height: calc(var(--creature-unit) * 3);
+  --fly-color: #145156;
+  --fly-shadow: 0 0.125vmin 0.5vmin rgba(30, 85, 85, 0.5),
+    0 0 2vmin rgba(30, 85, 85, 0.25);
+  position: relative;
+  width: var(--fly-width);
+  height: var(--fly-height);
+  margin: auto;
+}
+.fly__head {
+  position: relative;
+  width: 100%;
+  height: 30%;
+  border-radius: 50%;
+  border-top-left-radius: 70% 100%;
+  border-top-right-radius: 70% 100%;
+  background: linear-gradient(90deg, #ddd, transparent 15%, transparent 30%, #111, transparent 70%, transparent 85%, #ddd), radial-gradient(ellipse 65% 65%, var(--fly-color) 35%, #ddd 45%, dodgerblue 65%, red 80%);
+  background-size: 100% 100%, 100% 300%;
+  background-position: 0% 0%, 0% 300%;
+  box-shadow: var(--fly-shadow);
+}
+.fly__head::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(ellipse 200% 200%, transparent, transparent 24%, black 25%);
+  background-size: 15% 30%;
+  background-position: 22.5% 0;
+  border-radius: inherit;
+}
+.fly__body {
+  background: radial-gradient(ellipse 100% 100%, var(--fly-color) 15%, #060b0a 35%, #373633 50%);
+  background-size: 140% 120%;
+  background-position: 50% -50%;
+  width: 100%;
+  height: 60%;
+  border-radius: 30%;
+  border-bottom-left-radius: 60% 100%;
+  border-bottom-right-radius: 60% 100%;
+  box-shadow: var(--fly-shadow);
+}
+.fly__wing {
+  position: absolute;
+  top: 30%;
+  height: 65%;
+  width: 100%;
+  background: #cae5fc;
+  opacity: 0.625;
+}
+.fly__wing--left {
+  left: -62.5%;
+  border-radius: 100% 10% 60% 20%;
+  transform-origin: 100% 0;
+  animation: flap-left calc(var(--wing-speed) * 1ms) infinite alternate;
+}
+.fly__wing--right {
+  right: -62.5%;
+  border-radius: 10% 100% 20% 60%;
+  transform-origin: 0 0;
+  animation: flap-right calc(var(--wing-speed) * 1ms) infinite alternate;
+}
+
+/* ------------------------ FLY: animation ------------------------ */
+@keyframes flap-left {
+  from {
+    rotate: 60deg;
+  }
+  to {
+    rotate: -10deg;
+  }
+}
+@keyframes flap-right {
+  from {
+    rotate: -60deg;
+  }
+  to {
+    rotate: 10deg;
+  }
+}
+@media (hover: hover) {
+  .fly__wrapper {
+    transition: transform 0.5s ease-out;
+  }
+
+  td span:hover {
+    transition: none;
+  }
+}
+/* ---------------------------- GECKO ---------------------------- */
+:root {
+  --members-scale: 0.875;
+}
+
+/* --------------- GECKO: position aware FLY tracking mechanics ----------------- */
+.gecko__placement {
+  position: absolute;
+  left: calc(var(--head-x, 0) * 1dvw);
+  top: calc(var(--head-y, 0) * 1dvh);
+  rotate: calc(var(--head-initial-rotation, 0) * 1deg);
+  z-index: -1;
+  --abs-angle-over-90: calc(
+    1 - 2 * var(--is-x-flipped, 0) * 1 - 2 * var(--is-y-flipped, 0)
+  );
+  scale: calc(1 - 2 * var(--is-x-flipped, 0)) calc(1 - 2 * var(--is-y-flipped, 0));
+  /* default placement */
+  --x: 48;
+  --y: 45;
+  /* Relative coordinates */
+  --dx: calc(
+    var(--abs-angle-over-90) *
+      min(
+        var(--x, 0) - var(--head-x, 0),
+        var(--x, 0) - var(--head-x, 0) + var(--head-x-offset, 0)
+      )
+  );
+  --dy: calc(
+    max(
+      calc(var(--head-initial-rotation, 0) - 90),
+      min(
+        var(--y, 0) - var(--head-y, 0),
+        var(--y, 0) - var(--head-y, 0) + var(--head-y-offset, 0)
+      )
+    )
+  );
+  /* Angle calculation using atan2 */
+  --head-angle: max(
+    var(--min-head-angle),
+    min(
+      var(--max-head-angle),
+      calc(
+        (atan2(var(--dy), var(--dx)) * var(--head-angle-intensity, 1)) -
+          calc(
+            (
+                var(--head-initial-rotation, 0) * var(--head-angle-intensity, 1) *
+                  1deg
+              ) + var(--head-angle-correction, 0deg)
+          )
+      )
+    )
+  );
+}
+
+/* --------------------- GECKO: shared styles --------------------- */
+.gecko {
+  --gecko-viewport-width: 2000;
+  --gecko-width: calc(100 * var(--creature-unit));
+  --gecko-height: calc(100 * var(--creature-unit));
+  --gecko-proportionate-size: calc(
+    var(--gecko-width) / var(--gecko-viewport-width)
+  );
+  position: absolute;
+  --gecko-placement-x: calc(-49.25 + var(--x-offset, 0));
+  --gecko-placement-y: calc(-57.5 + var(--y-offset, 0));
+  top: calc(var(--gecko-placement-y) * var(--creature-unit));
+  left: calc(var(--gecko-placement-x) * var(--creature-unit));
+  width: var(--gecko-width);
+  height: var(--gecko-height);
+  aspect-ratio: 1/1;
+  color: #666;
+  transition: all var(--gecko-transition-duration, 0.5s) ease;
+}
+
+.gecko__body-part {
+  --translate-x-member: 0;
+  --translate-y-member: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: all var(--gecko-transition-duration, 0.5s) ease;
+  width: calc(var(--width) * var(--gecko-proportionate-size));
+  height: calc(var(--height) * var(--gecko-proportionate-size));
+  left: calc(var(--left) * var(--gecko-proportionate-size));
+  top: calc(var(--top) * var(--gecko-proportionate-size));
+  transform-origin: var(--transform-origin-x) var(--transform-origin-y);
+  transform: translate3d(var(--translate-x-member, 0px), var(--translate-y-member, 0px), 0) scale(var(--scale-member, 1)) rotate3d(0, 0, 1, calc(var(--rotate-member, 0) * 1deg));
+  opacity: var(--opacity);
+}
+.gecko__body-part svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.gecko__shoulders {
+  --left: 904;
+  --top: 433;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 78%;
+  --transform-origin-opacity: 1;
+  --rotate-member: 63;
+  --top: 1000;
+  --torso: 1;
+}
+.gecko__shoulders .gecko__thorax {
+  --left: -1;
+  --top: -17;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 60%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--torso) * 35);
+}
+.gecko__shoulders .gecko__arm--left {
+  --left: -91;
+  --top: 54;
+  --transform-origin-x: 80%;
+  --transform-origin-y: 35%;
+  --transform-origin-opacity: 1;
+  --scale-member: var(--members-scale);
+  --rotate-member: -45;
+}
+.gecko__shoulders .gecko__forearm--left {
+  --left: -65;
+  --top: 40;
+  --transform-origin-x: 80%;
+  --transform-origin-y: 67%;
+  --transform-origin-opacity: 1;
+  --rotate-member: 60;
+}
+.gecko__shoulders .gecko__hand--left {
+  --left: -84;
+  --top: -71;
+  --transform-origin-x: 79%;
+  --transform-origin-y: 70%;
+  --transform-origin-opacity: 1;
+  --rotate-member: -25;
+}
+.gecko__shoulders .gecko__arm--right {
+  --left: 137;
+  --top: 53;
+  --transform-origin-x: 20%;
+  --transform-origin-y: 35%;
+  --transform-origin-opacity: 1;
+  --scale-member: var(--members-scale);
+  --rotate-member: -30;
+}
+.gecko__shoulders .gecko__forearm--right {
+  --left: 91;
+  --top: 30;
+  --transform-origin-x: 26%;
+  --transform-origin-y: 62%;
+  --transform-origin-opacity: 1;
+  --rotate-member: 5;
+}
+.gecko__shoulders .gecko__hand--right {
+  --left: 74;
+  --top: -79;
+  --transform-origin-x: 13%;
+  --transform-origin-y: 59%;
+  --transform-origin-opacity: 1;
+  --rotate-member: -40;
+}
+.gecko__shoulders .gecko__ribs {
+  --left: 5;
+  --top: 48;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 21%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(
+    -1 * var(--torso) * 30
+  );
+}
+.gecko__shoulders .gecko__back {
+  --left: -14;
+  --top: 43;
+  --transform-origin-x: 35%;
+  --transform-origin-y: 41%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(
+    -1 * var(--torso) * 16
+  );
+}
+.gecko__shoulders .gecko__hips {
+  --hip-rotation: -1;
+  --left: 27;
+  --top: 426;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 14%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--hip-rotation) * var(--torso) * 37);
+}
+.gecko__shoulders .gecko__tail--0 {
+  --left: 9;
+  --top: 96;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 26%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--hip-rotation) * 15);
+}
+.gecko__shoulders .gecko__tail--1 {
+  --left: -1;
+  --top: 165;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 26%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--hip-rotation) * 20);
+}
+.gecko__shoulders .gecko__tail--2 {
+  --left: 10;
+  --top: 105;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 26%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--hip-rotation) * 20);
+}
+.gecko__shoulders .gecko__tail--3 {
+  --left: 9;
+  --top: 92;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 26%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--hip-rotation) * 20);
+}
+.gecko__shoulders .gecko__tail--4 {
+  --left: 11;
+  --top: 108;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 26%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--hip-rotation) * 20);
+}
+.gecko__shoulders .gecko__tail--5 {
+  --left: 11;
+  --top: 85;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 26%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--hip-rotation) * 20);
+}
+.gecko__shoulders .gecko__tail--6 {
+  --left: 9;
+  --top: 73;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 26%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--hip-rotation) * 20);
+}
+.gecko__shoulders .gecko__tail--7 {
+  --left: 5;
+  --top: 53;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 26%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--hip-rotation) * 20);
+}
+.gecko__shoulders .gecko__tail--8 {
+  --left: 8;
+  --top: 52;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 26%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--hip-rotation) * 20);
+}
+.gecko__shoulders .gecko__tail--9 {
+  --left: 4;
+  --top: 42;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 15%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--hip-rotation) * 20);
+}
+.gecko__shoulders .gecko__tail--10 {
+  --left: 5;
+  --top: 55;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 19%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--hip-rotation) * 15);
+  z-index: -1;
+}
+.gecko__shoulders .gecko__leg--left {
+  --left: -124;
+  --top: 49;
+  --transform-origin-x: 90%;
+  --transform-origin-y: 55%;
+  --transform-origin-opacity: 1;
+  --scale-member: var(--members-scale);
+  --rotate-member: -30;
+}
+.gecko__shoulders .gecko__shin--left {
+  --left: -76;
+  --top: 10;
+  --transform-origin-x: 87%;
+  --transform-origin-y: 22%;
+  --transform-origin-opacity: 1;
+  --rotate-member: -15;
+}
+.gecko__shoulders .gecko__foot--left {
+  --left: -105;
+  --top: 25;
+  --transform-origin-x: 82%;
+  --transform-origin-y: 42%;
+  --transform-origin-opacity: 1;
+  --rotate-member: -15;
+}
+.gecko__shoulders .gecko__leg--right {
+  --left: 89;
+  --top: 48;
+  --transform-origin-x: 10%;
+  --transform-origin-y: 55%;
+  --transform-origin-opacity: 1;
+  --scale-member: var(--members-scale);
+  --rotate-member: -20;
+}
+.gecko__shoulders .gecko__shin--right {
+  --left: 160;
+  --top: 4;
+  --transform-origin-x: 10%;
+  --transform-origin-y: 29%;
+  --transform-origin-opacity: 1;
+  --rotate-member: 50;
+}
+.gecko__shoulders .gecko__foot--right {
+  --left: 58;
+  --top: 0;
+  --transform-origin-x: 15%;
+  --transform-origin-y: 45%;
+  --transform-origin-opacity: 1;
+  --rotate-member: 5;
+}
+.gecko__shoulders .gecko__neck__body {
+  --left: -15;
+  --top: -60;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 90%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--head-angle) * 1 / 6);
+}
+.gecko__shoulders .gecko__neck__head {
+  --left: -5;
+  --top: -54;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 66%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--head-angle) * 1 / 3);
+}
+.gecko__shoulders .gecko__head {
+  --left: -104;
+  --top: -169;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 65%;
+  --transform-origin-opacity: 1;
+  --rotate-member: calc(var(--head-angle) * 1 / 2);
+}
+
+/* ----------------- GECKO: unique body styles ------------------ */
+.gecko__placement--1 {
+  --head-x: var(--gecko-1-x);
+  --head-y: var(--gecko-1-y);
+  z-index: var(--gecko-1-z);
+  filter: drop-shadow(calc(var(--creature-unit) / -2.5) 0 calc(var(--creature-unit) / 2) rgba(0, 0, 0, 0.25));
+}
+.gecko__placement--1 .gecko__shoulders {
+  --rotate-member: 80;
+}
+.gecko__placement--1 .gecko__thorax {
+  --rotate-member: 0;
+}
+.gecko__placement--1 .gecko__arm--right {
+  --rotate-member: 30;
+  --transform-origin-x: 0%;
+  --transform-origin-y: 45%;
+}
+.gecko__placement--1 .gecko__forearm--right {
+  --rotate-member: -50;
+}
+.gecko__placement--1 .gecko__hand--right {
+  --rotate-member: 0;
+}
+.gecko__placement--1 .gecko__neck__body {
+  --top: -62.5;
+  --transform-origin-x: 50%;
+  --transform-origin-y: 95%;
+}
+.gecko__placement--1 .gecko__neck__head {
+  --transform-origin-x: 45%;
+}
+
+.gecko__placement--2 {
+  --head-x: var(--gecko-2-x);
+  --head-y: var(--gecko-2-y);
+  --head-initial-rotation: 90;
+  z-index: var(--gecko-2-z);
+  filter: drop-shadow(calc(var(--creature-unit) / -2.5) 0 calc(var(--creature-unit) / 2) rgba(0, 0, 0, 0.25));
+}
+.gecko__placement--2 .gecko {
+  --x-offset: 3;
+  --y-offset: 0;
+}
+.gecko__placement--2 .gecko__hips {
+  --hip-rotation: -0.5;
+}
+.gecko__placement--2 .gecko__tail--0 {
+  --rotate-member: -4;
+}
+.gecko__placement--2 .gecko__tail--1,
+.gecko__placement--2 .gecko__tail--2,
+.gecko__placement--2 .gecko__tail--3,
+.gecko__placement--2 .gecko__tail--4,
+.gecko__placement--2 .gecko__tail--5,
+.gecko__placement--2 .gecko__tail--6,
+.gecko__placement--2 .gecko__tail--7 {
+  --rotate-member: -5;
+}
+.gecko__placement--2 .gecko__tail--8 {
+  --rotate-member: -4;
+}
+.gecko__placement--2 .gecko__tail--9 {
+  --rotate-member: -3;
+}
+.gecko__placement--2 .gecko__tail--10 {
+  --rotate-member: -2;
+}
+.gecko__placement--2 .gecko__arm--left {
+  --rotate-member: 30;
+}
+.gecko__placement--2 .gecko__forearm--left {
+  --rotate-member: 20;
+}
+.gecko__placement--2 .gecko__arm--right {
+  --rotate-member: -10;
+}
+.gecko__placement--2 .gecko__forearm--right {
+  --rotate-member: -50;
+}
+.gecko__placement--2 .gecko__hand--right {
+  --rotate-member: 0;
+}
+.gecko__placement--2 .gecko__leg--left {
+  --rotate-member: -20;
+}
+.gecko__placement--2 .gecko__leg--right {
+  --rotate-member: -35;
+}
+.gecko__placement--2 .gecko__shin--right {
+  --rotate-member: 70;
+}
+.gecko__placement--2 .gecko__foot--right {
+  --rotate-member: -10;
+}
+
+.gecko__placement--3 {
+  --head-x: var(--gecko-3-x);
+  --head-y: var(--gecko-3-y);
+  --is-x-flipped: 1;
+  filter: drop-shadow(calc(var(--creature-unit) / -2.5) 0 calc(var(--creature-unit) / 2) rgba(0, 0, 0, 0.25));
+  z-index: var(--gecko-3-z);
+}
+.gecko__placement--3 .gecko {
+  --x-offset: 3;
+  --y-offset: 0;
+}
+.gecko__placement--3 .gecko__shoulders {
+  --rotate-member: 70;
+}
+.gecko__placement--3 .gecko__hips {
+  --rotate-member: -40;
+}
+.gecko__placement--3 .gecko__tail--0 {
+  --rotate-member: -15;
+}
+.gecko__placement--3 .gecko__tail--1 {
+  --rotate-member: -20;
+}
+.gecko__placement--3 .gecko__tail--2 {
+  --rotate-member: -25;
+}
+.gecko__placement--3 .gecko__tail--3,
+.gecko__placement--3 .gecko__tail--4 {
+  --rotate-member: -15;
+}
+.gecko__placement--3 .gecko__tail--7 {
+  --hip-rotation: 1;
+  --rotate-member: 0;
+}
+.gecko__placement--3 .gecko__tail--8,
+.gecko__placement--3 .gecko__tail--9,
+.gecko__placement--3 .gecko__tail--10 {
+  --rotate-member: 12;
+}
+
+.gecko__neck__body,
+.gecko__neck__head,
+.gecko__head {
+  will-change: transform;
+  transform: translate3d(var(--translate-x-member, 0px), var(--translate-y-member, 0px), 0) rotate3d(0, 0, 1, var(--rotate-member));
+  transition: transform var(--gecko-transition-duration, 0.125s) ease-in var(--gecko-transition-delay, 0s);
+}
+
+.gecko__neck__body {
+  transform: translate3d(var(--translate-x-member, 0px), var(--translate-y-member, 0px), 0) rotate3d(0, 0, 1, calc(var(--body-neck-offset, 30deg) + var(--rotate-member)));
+}
+
+/* ---------------------------------------------------------------------- */
+/* ------------------------- EXTRA INTERACTIONS ------------------------- */
+/* ---------------------------------------------------------------------- */
+/* ------------------------ GECKO: tail animation ----------------------- */
+.gecko__placement--1 {
+  --offset-delay: 3.375s;
+  --multiplier: 0.0875;
+}
+
+.gecko__placement--2 {
+  --offset-delay: 3s;
+  --multiplier: 0.1;
+}
+
+.gecko__placement--3 {
+  --offset-delay: 2s;
+  --multiplier: 0.075;
+}
+
+.gecko__body-part[class*=gecko__tail] {
+  will-change: transform;
+  transform-style: preserve-3d;
+  animation: inherit;
+  animation-delay: calc(var(--offset-delay) + var(--delay, 1) * 1s);
+}
+
+.gecko__hips > .gecko__body-part[class*=gecko__tail] {
+  --delay: calc(var(--multiplier) * 1);
+  animation: flinch 0.75s ease-out forwards;
+  animation-delay: calc(var(--offset-delay) + var(--delay, 1) * 1s);
+}
+.gecko__hips > .gecko__body-part[class*=gecko__tail] > .gecko__body-part[class*=gecko__tail] {
+  --delay: calc(var(--multiplier) * 2);
+}
+.gecko__hips > .gecko__body-part[class*=gecko__tail] > * > .gecko__body-part[class*=gecko__tail] {
+  --delay: calc(var(--multiplier) * 3);
+}
+.gecko__hips > .gecko__body-part[class*=gecko__tail] > * > * > .gecko__body-part[class*=gecko__tail] {
+  --delay: calc(var(--multiplier) * 4);
+}
+.gecko__hips > .gecko__body-part[class*=gecko__tail] > * > * > * > .gecko__body-part[class*=gecko__tail] {
+  --delay: calc(var(--multiplier) * 5);
+}
+.gecko__hips > .gecko__body-part[class*=gecko__tail] > * > * > * > * > .gecko__body-part[class*=gecko__tail] {
+  --delay: calc(var(--multiplier) * 6);
+}
+.gecko__hips > .gecko__body-part[class*=gecko__tail] > * > * > * > * > * > .gecko__body-part[class*=gecko__tail] {
+  --delay: calc(var(--multiplier) * 7);
+}
+.gecko__hips > .gecko__body-part[class*=gecko__tail] > * > * > * > * > * > * > .gecko__body-part[class*=gecko__tail] {
+  --delay: calc(var(--multiplier) * 8);
+}
+.gecko__hips > .gecko__body-part[class*=gecko__tail] > * > * > * > * > * > * > * > .gecko__body-part[class*=gecko__tail] {
+  --delay: calc(var(--multiplier) * 9);
+}
+.gecko__hips > .gecko__body-part[class*=gecko__tail] > * > * > * > * > * > * > * > * > .gecko__body-part[class*=gecko__tail] {
+  --delay: calc(var(--multiplier) * 10);
+}
+.gecko__hips > .gecko__body-part[class*=gecko__tail] > * > * > * > * > * > * > * > * > * > .gecko__body-part[class*=gecko__tail] {
+  --delay: calc(var(--multiplier) * 11);
+}
+@keyframes flinch {
+  0% {
+    transform: translate3d(var(--translate-x-member, 0px), var(--translate-y-member, 0px), 0) scale3d(var(--scale-member, 1), 1, 1) rotate3d(0, 0, 1, calc(var(--rotate-member, 0) * 1deg));
+  }
+  50% {
+    transform: translate3d(var(--translate-x-member, 0px), var(--translate-y-member, 0px), 0) scale3d(var(--scale-member, 1), 1, 1) rotate3d(0, 0, 1, calc( max(var(--rotate-member, 0), -1 * var(--rotate-member, 0)) * 2.5deg * var(--delay) ));
+  }
+  100% {
+    transform: translate3d(var(--translate-x-member, 0px), var(--translate-y-member, 0px), 0) scale3d(var(--scale-member, 1), 1, 1) rotate3d(0, 0, 1, calc(var(--rotate-member, 0) * 1deg));
+  }
+}
+
+/* ------------- GECKO: attack body placement and motion limitation ------------ */
+:root {
+  --creature-unit-percentage: 12%;
+  --creature-unit: 1.75vh;
+  --gecko-1-x: 1;
+  --gecko-1-y: 40;
+  --gecko-1-z: 3;
+  --gecko-2-x: 70;
+  --gecko-2-y: 0;
+  --gecko-2-z: 2;
+  --gecko-3-x: 100;
+  --gecko-3-y: 15;
+  --gecko-3-z: 3;
+}
+:root .gecko__placement--1 {
+  --min-head-angle: -80deg;
+  --max-head-angle: 45deg;
+  --head-x-offset: 21;
+  --head-y-offset: -6;
+}
+:root .gecko__placement--2 {
+  --min-head-angle: -55deg;
+  --max-head-angle: 70deg;
+  --head-angle-intensity: 1.25;
+  --head-x-offset: 0;
+  --head-y-offset: -15;
+}
+:root .gecko__placement--3 {
+  --min-head-angle: -65deg;
+  --max-head-angle: 60deg;
+  --head-x-offset: 3;
+  --head-y-offset: 9;
+}
+:root [class*=gecko-trap-] > .gecko-attack-area {
+  display: none;
+}
+:root [class*=_base] > .gecko-attack-area {
+  display: block;
+}
+@media screen and (min-width: 200vh) {
+  :root {
+    --creature-unit: min(1.875vh, 0.625vw);
+    --gecko-1-x: 9;
+    --gecko-1-y: 42.5;
+    --gecko-2-x: 70;
+    --gecko-2-y: 0;
+    --gecko-3-x: 97.5;
+    --gecko-3-y: 30;
+  }
+  :root .gecko__placement--1 .gecko__arm--left {
+    --left: -75;
+    --top: 15;
+    --rotate-member: 5;
+    --transform-origin-x: 50%;
+    --transform-origin-y: 40%;
+  }
+  :root .gecko__placement--1 .gecko__forearm--left {
+    --rotate-member: 50;
+  }
+  :root .gecko__placement--1 .gecko__hand--left {
+    --rotate-member: -35;
+    --transform-origin-x: 75%;
+  }
+  :root .gecko__placement--2 {
+    --head-angle-intensity: 1;
+    --head-y-offset: -21;
+  }
+  :root [class*=gecko-trap-] > .gecko-attack-area {
+    display: none;
+  }
+  :root [class*=_min200] > .gecko-attack-area {
+    display: block;
+  }
+}
+@media screen and (min-width: 250vh) {
+  :root {
+    --creature-unit: max(1.75vh, 0.5vw);
+  }
+  :root .gecko__placement--1 {
+    --head-angle-correction: 5deg;
+  }
+  :root .gecko__placement--2 {
+    --head-angle-intensity: 1.25;
+    --head-angle-correction: 5deg;
+  }
+  :root .gecko__placement--3 {
+    --head-angle-correction: 5deg;
+  }
+  :root [class*=gecko-trap-] > .gecko-attack-area {
+    display: none;
+  }
+  :root [class*=_min250] > .gecko-attack-area {
+    display: block;
+  }
+}
+@media screen and (min-width: 300vh) {
+  :root .gecko__placement--1 {
+    --head-angle-intensity: 0.875;
+    --head-angle-correction: 5deg;
+  }
+  :root .gecko__placement--2 {
+    --head-angle-intensity: 1.5;
+  }
+  :root [class*=gecko-trap-] > .gecko-attack-area {
+    display: none;
+  }
+  :root [class*=_min300] > .gecko-attack-area {
+    display: block;
+  }
+}
+@media screen and (min-width: 350vh) {
+  :root .gecko__placement--1 {
+    --head-angle-correction: 0deg;
+  }
+  :root .gecko__placement--2 {
+    --head-angle-correction: 5deg;
+    --head-x-offset: 12;
+    --head-y-offset: -24;
+  }
+  :root .gecko__placement--3 {
+    --head-angle-correction: 0deg;
+  }
+  :root [class*=gecko-trap-] > .gecko-attack-area {
+    display: none;
+  }
+  :root [class*=_min350] > .gecko-attack-area {
+    display: block;
+  }
+}
+@media screen and (min-width: 450vh) {
+  :root {
+    --creature-unit: max(2dvh, calc(100dvw / 33 * 0.15));
+  }
+  :root [class*=gecko-trap-] > .gecko-attack-area {
+    display: none;
+  }
+  :root [class*=_min450] > .gecko-attack-area {
+    display: block;
+  }
+}
+@media screen and (max-width: 166vh) {
+  :root {
+    --gecko-1-x: 1.25;
+    --gecko-1-y: 45;
+    --gecko-1-z: 1;
+    --gecko-2-x: 65.75;
+    --gecko-2-y: 0;
+    --gecko-3-x: 100;
+    --gecko-3-y: 17.5;
+  }
+  :root .gecko__placement--1 .gecko__arm--left {
+    --left: -75;
+    --top: 15;
+    --rotate-member: 5;
+    --transform-origin-x: 50%;
+    --transform-origin-y: 40%;
+  }
+  :root .gecko__placement--1 .gecko__forearm--left {
+    --rotate-member: 50;
+  }
+  :root .gecko__placement--1 .gecko__hand--left {
+    --rotate-member: -35;
+    --transform-origin-x: 75%;
+  }
+  :root [class*=gecko-trap-] > .gecko-attack-area {
+    display: none;
+  }
+  :root [class*=_max166] > .gecko-attack-area {
+    display: block;
+  }
+}
+@media screen and (max-width: 150vh) {
+  :root {
+    --creature-unit: 1.625vh;
+    --gecko-1-x: 2.5;
+    --gecko-1-y: 45;
+    --gecko-2-x: 61.5;
+    --gecko-2-y: 0;
+    --gecko-3-x: 100;
+    --gecko-3-y: 20;
+  }
+  :root [class*=gecko-trap-] > .gecko-attack-area {
+    display: none;
+  }
+  :root [class*=_max150] > .gecko-attack-area {
+    display: block;
+  }
+}
+@media screen and (max-width: 125vh) {
+  :root {
+    --creature-unit: 1.5vh;
+    --gecko-1-x: 3.75;
+    --gecko-1-y: 45;
+    --gecko-2-x: 80;
+    --gecko-2-y: 0;
+    --gecko-3-x: 100;
+    --gecko-3-y: 55;
+    --gecko-3-z: 1;
+  }
+  :root .gecko__placement--1 {
+    --head-x-offset: 0;
+    --head-y-offset: -9;
+  }
+  :root .gecko__placement--3 {
+    --head-x-offset: 21;
+    --head-y-offset: 6;
+  }
+  :root [class*=gecko-trap-] > .gecko-attack-area {
+    display: none;
+  }
+  :root [class*=_max125] > .gecko-attack-area {
+    display: block;
+  }
+}
+@media screen and (max-width: 100vh) {
+  :root {
+    --creature-unit: 1.33vh;
+    --gecko-1-x: 5;
+    --gecko-1-y: 30;
+    --gecko-1-z: 3;
+    --gecko-2-x: 75;
+    --gecko-2-y: 0;
+    --gecko-3-x: 100;
+    --gecko-3-y: 55;
+  }
+  :root .gecko__placement--1 {
+    --head-x-offset: -9;
+  }
+  :root .gecko__placement--2 {
+    --head-x-offset: 6;
+    --head-y-offset: -12;
+  }
+  :root .gecko__placement--3 {
+    --head-x-offset: 24;
+    --head-y-offset: -4;
+  }
+  :root [class*=gecko-trap-] > .gecko-attack-area {
+    display: none;
+  }
+  :root [class*=_max100] > .gecko-attack-area {
+    display: block;
+  }
+}
+@media screen and (max-width: 75vh) {
+  :root {
+    --gecko-1-x: 5;
+    --gecko-1-y: 25;
+    --gecko-1-z: 3;
+    --gecko-2-x: 80;
+    --gecko-2-y: 0;
+    --gecko-3-x: 100;
+    --gecko-3-y: 62.5;
+  }
+  :root [class*=gecko-trap-] > .gecko-attack-area {
+    display: none;
+  }
+  :root [class*=_max75] > .gecko-attack-area {
+    display: block;
+  }
+}
+@media screen and (max-width: 66.6vh) {
+  :root {
+    --creature-unit: 1.25vh;
+    --gecko-1-x: 5;
+    --gecko-1-y: 62.5;
+    --gecko-1-z: 3;
+    --gecko-2-x: 70;
+    --gecko-2-y: 0;
+    --gecko-3-x: 100;
+    --gecko-3-y: 40;
+  }
+  :root .gecko__placement--1 {
+    --head-x-offset: -15;
+    --head-y-offset: -5;
+  }
+  :root .gecko__placement--2 {
+    --head-angle-correction: 10deg;
+    --head-x-offset: 0;
+    --head-y-offset: -6;
+  }
+  :root .gecko__placement--3 {
+    --head-angle-intensity: 2;
+    --head-x-offset: 6;
+    --head-y-offset: 3;
+  }
+  :root [class*=gecko-trap-] > .gecko-attack-area {
+    display: none;
+  }
+  :root [class*=_max66] > .gecko-attack-area {
+    display: block;
+  }
+}
+@media screen and (max-width: 50vh) {
+  :root {
+    --creature-unit: 1vh;
+    --gecko-1-x: 5;
+    --gecko-1-y: 30;
+    --gecko-1-z: 3;
+    --gecko-2-x: 65;
+    --gecko-2-y: 0;
+    --gecko-3-x: 103.5;
+    --gecko-3-y: 67.5;
+  }
+  :root .gecko__placement--1 {
+    --head-angle-intensity: 1.5;
+  }
+  :root .gecko__placement--2 {
+    --head-angle-correction: 0deg;
+    --head-x-offset: 18;
+    --head-y-offset: -3;
+  }
+  :root .gecko__placement--3 {
+    --head-angle-intensity: 3;
+  }
+  :root [class*=gecko-trap-] > .gecko-attack-area {
+    display: none;
+  }
+  :root [class*=_max50] > .gecko-attack-area {
+    display: block;
+  }
+}
+
+/* --------------- GECKO & FLY: (restart) attack animation -------------- */
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) {
+  --gecko-transition-duration: 0.075s;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) td:hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200vmax;
+  height: 200vmax;
+  transform: translate(-50%, -50%);
+  z-index: 1000000;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .fly {
+  --wing-speed: 0s;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 {
+  --head-angle-correction: -10deg;
+  --head-x-offset: 12;
+  --head-y-offset: 0;
+  /* reset tail animation */
+}
+@media screen and (min-width: 200vh) {
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 {
+    --head-angle-correction: -15deg;
+  }
+}
+@media screen and (min-width: 250vh) {
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 {
+    --head-x-offset: 6;
+    --head-angle-intensity: 0.875;
+  }
+}
+@media screen and (min-width: 300vh) {
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 {
+    --head-angle-correction: -10deg;
+    --head-angle-intensity: 0.625;
+    --head-x-offset: 24;
+    --head-y-offset: 9;
+  }
+}
+@media screen and (max-width: 150vh) {
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 {
+    --head-angle-correction: -10deg;
+    --head-angle-intensity: 1.1;
+    --head-x-offset: 12;
+    --head-y-offset: 9;
+  }
+}
+@media screen and (max-width: 125vh) {
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 {
+    --head-angle-intensity: 1.25;
+  }
+}
+@media screen and (max-width: 100vh) {
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 {
+    --head-angle-intensity: 1.5;
+    --head-x-offset: 30;
+    --head-y-offset: 15;
+  }
+}
+@media screen and (max-width: 75vh) {
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 {
+    --head-angle-correction: -10deg;
+    --head-angle-intensity: 1.75;
+    --head-x-offset: 36;
+  }
+}
+@media screen and (max-width: 66.6vh) {
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 {
+    --head-angle-intensity: 2;
+  }
+}
+@media screen and (max-width: 50vh) {
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 {
+    --head-x-offset: 42;
+    --head-angle-intensity: 2.375;
+    --head-angle-correction: -10deg;
+  }
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__shoulders {
+  --translate-x-member: calc(var(--creature-unit-percentage) * 2.5);
+  --translate-y-member: calc(var(--creature-unit-percentage) * -1.667);
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__shoulders > svg {
+  animation: eat__shoulders 0.125s ease-in-out forwards 0.25s;
+  animation-iteration-count: 2;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__ribs {
+  --rotate-member: calc(-1 * var(--torso) * 25);
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__back {
+  --rotate-member: calc(-1 * var(--torso) * 14);
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__hips {
+  --rotate-member: calc(var(--hip-rotation) * var(--torso) * 30);
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__arm--left {
+  --rotate-member: -62;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__forearm--left {
+  --rotate-member: 15;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__hand--left {
+  --rotate-member: 42;
+  --translate-x-member: calc(var(--creature-unit-percentage) * -0.25);
+  --translate-y-member: calc(var(--creature-unit-percentage) * 0.5);
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__arm--right {
+  --rotate-member: 16;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__forearm--right {
+  --rotate-member: 43;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__hand--right {
+  --rotate-member: -72;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__leg--left {
+  --rotate-member: -76;
+  --translate-x-member: calc(var(--creature-unit-percentage) * -1.25);
+  --translate-y-member: calc(var(--creature-unit-percentage) * -0.25);
+  z-index: -1;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__shin--left {
+  --rotate-member: 26;
+  --translate-x-member: calc(var(--creature-unit-percentage) * -1.25);
+  --translate-y-member: calc(var(--creature-unit-percentage) * 0.25);
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__foot--left {
+  --rotate-member: -23;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__leg--right {
+  --rotate-member: -10;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__shin--right {
+  --rotate-member: 35;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__foot--right {
+  --rotate-member: -3;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 :is(.gecko__tail--3, .gecko__tail--4, .gecko__tail--5) {
+  --rotate-member: -22.5;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 :is(.gecko__tail--6, .gecko__tail--7, .gecko__tail--8, .gecko__tail--9) {
+  --rotate-member: -15;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__tail--10 {
+  --rotate-member: -15;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__neck__body {
+  --body-neck-offset: 15deg;
+  --translate-x-member: calc(var(--creature-unit-percentage) * 0.625);
+  --translate-y-member: calc(var(--creature-unit-percentage) * -0.25);
+  --transform-origin-x: 50%;
+  --transform-origin-y: 80%;
+  --rotate-member: calc(var(--head-angle) * 1 / 2);
+  animation: eat__neck__body 0.125s ease-in-out backwards 0.2s;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__neck__head {
+  --rotate-member: calc(var(--head-angle) * 1 / 3);
+  animation: eat__neck__head 0.125s ease-in-out backwards 0.2s;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__head {
+  --translate-y-member: calc(var(--creature-unit-percentage) * 0.25);
+  --rotate-member: calc(var(--head-angle) * 1 / 6);
+  animation: eat__head 0.125s ease-in-out backwards 0.2s;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__body-part[class*=gecko__tail] {
+  animation: none;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .restart-screen {
+  animation: finish__use-restart-screen 1ms linear forwards 0.625s;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .fly__wrapper {
+  z-index: 0;
+  animation: eat__fly 0.0625s ease-in-out forwards 0.2s, reset-fly 1ms linear forwards 0.625s;
+  transition: none;
+}
+body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement {
+  animation: reset-gecko 1ms linear forwards 0.625s;
+}
+@media screen and (min-width: 200vh) {
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__arm--left {
+    --rotate-member: -40;
+    --translate-x-member: calc(var(--creature-unit-percentage) * 0.5);
+    --translate-y-member: calc(var(--creature-unit-percentage) * 2.5);
+  }
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__forearm--left {
+    --rotate-member: 79;
+  }
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__hand--left {
+    --rotate-member: -17;
+    --transform-origin-x: 50%;
+  }
+}
+@media screen and (max-width: 166vh) {
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__arm--left {
+    --rotate-member: -40;
+    --translate-x-member: calc(var(--creature-unit-percentage) * 0.5);
+    --translate-y-member: calc(var(--creature-unit-percentage) * 2.5);
+  }
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__forearm--left {
+    --rotate-member: 79;
+  }
+  body:has(:is(.gecko-trap-1_base,
+    .gecko-trap-1_min200,
+    .gecko-trap-1_min250,
+    .gecko-trap-1_min300,
+    .gecko-trap-1_min350,
+    .gecko-trap-1_min450,
+    .gecko-trap-1_max166,
+    .gecko-trap-1_max150,
+    .gecko-trap-1_max125,
+    .gecko-trap-1_max100,
+    .gecko-trap-1_max75,
+    .gecko-trap-1_max66,
+    .gecko-trap-1_max50) span:hover) .gecko__placement--1 .gecko__hand--left {
+    --rotate-member: -17;
+    --transform-origin-x: 50%;
+  }
+}
+
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) {
+  --gecko-transition-duration: 0.075s;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) td:hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200vmax;
+  height: 200vmax;
+  transform: translate(-50%, -50%);
+  z-index: 1000000;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .fly {
+  --wing-speed: 0s;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 {
+  --head-x-offset: 15;
+  --head-y-offset: -24;
+  --head-angle-intensity: 1.1;
+  --head-angle-correction: -5deg;
+  /* reset tail animation */
+}
+@media screen and (min-width: 250vh) {
+  body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 {
+    --head-y-offset: -30;
+    --head-angle-intensity: 1;
+  }
+}
+@media screen and (min-width: 300vh) {
+  body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 {
+    --head-angle-intensity: 0.875;
+  }
+}
+@media screen and (max-width: 150vh) {
+  body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 {
+    --head-angle-intensity: 1;
+  }
+}
+@media screen and (max-width: 125vh) {
+  body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 {
+    --head-x-offset: 24;
+    --head-angle-intensity: 0.75;
+    --head-angle-correction: -10deg;
+  }
+}
+@media screen and (max-width: 100vh) {
+  body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 {
+    --head-x-offset: 12;
+    --head-y-offset: -6;
+    --head-angle-intensity: 1.25;
+  }
+}
+@media screen and (max-width: 75vh) {
+  body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 {
+    --head-x-offset: 15;
+    --head-angle-intensity: 1.125;
+  }
+}
+@media screen and (max-width: 66.6vh) {
+  body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 {
+    --head-x-offset: 21;
+    --head-angle-correction: -10deg;
+  }
+}
+@media screen and (max-width: 50vh) {
+  body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 {
+    --head-x-offset: 15;
+    --head-angle-intensity: 0.75;
+  }
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__shoulders {
+  --rotate-member: 65;
+  --translate-x-member: calc(var(--creature-unit-percentage) * 3);
+  --translate-y-member: calc(var(--creature-unit-percentage) * 0.667);
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__shoulders > svg {
+  animation: eat__shoulders 0.125s ease-in-out forwards 0.25s;
+  animation-iteration-count: 2;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__ribs {
+  --rotate-member: calc(-1 * var(--torso) * 25);
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__back {
+  --rotate-member: calc(-1 * var(--torso) * 14);
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__hips {
+  --rotate-member: calc(var(--hip-rotation) * var(--torso) * 30);
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__arm--left {
+  --rotate-member: -5;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__forearm--left {
+  --rotate-member: 25;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__hand--left {
+  --rotate-member: 5;
+  --translate-x-member: calc(var(--creature-unit-percentage) * -0.25);
+  --translate-y-member: calc(var(--creature-unit-percentage) * 0.25);
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__arm--right {
+  --rotate-member: 29.5;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__forearm--right {
+  --rotate-member: -63;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__hand--right {
+  --rotate-member: -29;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__leg--left {
+  --rotate-member: -42;
+  z-index: -1;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__shin--left {
+  --rotate-member: -10;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__foot--left {
+  --rotate-member: -10;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__leg--right {
+  --rotate-member: -45;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__shin--right {
+  --rotate-member: 60;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__foot--right {
+  --rotate-member: 0;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 :is(.gecko__tail--1,
+          .gecko__tail--2,
+          .gecko__tail--3,
+          .gecko__tail--4,
+          .gecko__tail--5,
+          .gecko__tail--6) {
+  --rotate-member: -7.5;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__tail--7 {
+  --rotate-member: -5;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__tail--8 {
+  --rotate-member: -3.75;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__tail--9,
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__tail--10 {
+  --rotate-member: -2.5;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__neck__body {
+  --body-neck-offset: 15deg;
+  --translate-x-member: calc(var(--creature-unit-percentage) * 0.625);
+  --translate-y-member: calc(var(--creature-unit-percentage) * -0.25);
+  --transform-origin-x: 50%;
+  --transform-origin-y: 80%;
+  --rotate-member: calc(var(--head-angle) * 1 / 2);
+  animation: eat__neck__body 0.125s ease-in-out backwards 0.2s;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__neck__head {
+  --rotate-member: calc(var(--head-angle) * 1 / 3);
+  animation: eat__neck__head 0.125s ease-in-out backwards 0.2s;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__head {
+  --translate-y-member: calc(var(--creature-unit-percentage) * 0.25);
+  --rotate-member: calc(var(--head-angle) * 1 / 6);
+  animation: eat__head 0.125s ease-in-out backwards 0.2s;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement--2 .gecko__body-part[class*=gecko__tail] {
+  animation: none;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .restart-screen {
+  animation: finish__use-restart-screen 1ms linear forwards 0.625s;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .fly__wrapper {
+  z-index: 0;
+  animation: eat__fly 0.125s ease-in-out forwards 0.2s, reset-fly 1ms linear forwards 0.625s;
+  transition: none;
+}
+body:has(:is(.gecko-trap-2_base,
+    .gecko-trap-2_min200,
+    .gecko-trap-2_min250,
+    .gecko-trap-2_min300,
+    .gecko-trap-2_min350,
+    .gecko-trap-2_min450,
+    .gecko-trap-2_max166,
+    .gecko-trap-2_max150,
+    .gecko-trap-2_max125,
+    .gecko-trap-2_max100,
+    .gecko-trap-2_max75,
+    .gecko-trap-2_max66,
+    .gecko-trap-2_max50) span:hover) .gecko__placement {
+  animation: reset-gecko 1ms linear forwards 0.625s;
+}
+
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) {
+  --gecko-transition-duration: 0.075s;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) td:hover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200vmax;
+  height: 200vmax;
+  transform: translate(-50%, -50%);
+  z-index: 1000000;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .fly {
+  --wing-speed: 0s;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 {
+  --head-angle-intensity: 1.1;
+  --head-angle-correction: -15deg;
+  /* reset tail animation */
+}
+@media screen and (min-width: 250vh) {
+  body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 {
+    --head-angle-intensity: 1;
+  }
+}
+@media screen and (min-width: 300vh) {
+  body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 {
+    --head-angle-intensity: 0.875;
+  }
+}
+@media screen and (max-width: 150vh) {
+  body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 {
+    --head-angle-intensity: 1.25;
+    --head-angle-correction: -15deg;
+  }
+}
+@media screen and (max-width: 125vh) {
+  body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 {
+    --head-angle-intensity: 1.625;
+  }
+}
+@media screen and (max-width: 100vh) {
+  body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 {
+    --head-angle-intensity: 2.125;
+    --head-angle-correction: -30deg;
+  }
+}
+@media screen and (max-width: 75vh) {
+  body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 {
+    --head-angle-intensity: 2.5;
+  }
+}
+@media screen and (max-width: 66.6vh) {
+  body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 {
+    --head-angle-intensity: 2.625;
+    --head-angle-correction: -25deg;
+    --head-y-offset: -3;
+  }
+}
+@media screen and (max-width: 50vh) {
+  body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 {
+    --head-angle-intensity: 3.5;
+    --head-angle-correction: -27.5deg;
+  }
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__shoulders {
+  --translate-x-member: calc(var(--creature-unit-percentage) * 4);
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__shoulders > svg {
+  animation: eat__shoulders 0.125s ease-in-out forwards 0.25s;
+  animation-iteration-count: 2;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__ribs {
+  --rotate-member: calc(-1 * var(--torso) * 25);
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__back {
+  --rotate-member: calc(-1 * var(--torso) * 14);
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__hips {
+  --rotate-member: calc(var(--hip-rotation) * var(--torso) * 30);
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__arm--left {
+  --rotate-member: -61;
+  --translate-y-member: calc(var(--creature-unit-percentage) * 1.25);
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__forearm--left {
+  --rotate-member: 15;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__hand--left {
+  --rotate-member: 34;
+  --translate-x-member: calc(var(--creature-unit-percentage) * -0.25);
+  --translate-y-member: calc(var(--creature-unit-percentage) * 0.25);
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__arm--right {
+  --rotate-member: -10;
+  --translate-x-member: calc(var(--creature-unit-percentage) * -0.25);
+  --translate-y-member: calc(var(--creature-unit-percentage) * -0.5);
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__forearm--right {
+  --rotate-member: 41;
+  --translate-x-member: calc(var(--creature-unit-percentage) * 0.25);
+  --translate-y-member: calc(var(--creature-unit-percentage) * 0.25);
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__hand--right {
+  --rotate-member: -95;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__leg--left {
+  --rotate-member: -65;
+  --translate-x-member: calc(var(--creature-unit-percentage) * -0.5);
+  z-index: -1;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__shin--left {
+  --rotate-member: 25;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__foot--left {
+  --rotate-member: -37.5;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__leg--right {
+  --rotate-member: -35;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__shin--right {
+  --rotate-member: 65;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__foot--right {
+  --rotate-member: -10;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 :is(.gecko__tail--1,
+          .gecko__tail--2,
+          .gecko__tail--3,
+          .gecko__tail--4,
+          .gecko__tail--5) {
+  --rotate-member: -15;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 :is(.gecko__tail--6,
+          .gecko__tail--7,
+          .gecko__tail--8,
+          .gecko__tail--9,
+          .gecko__tail--10) {
+  --rotate-member: -10;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__neck__body {
+  --body-neck-offset: 15deg;
+  --translate-x-member: calc(var(--creature-unit-percentage) * 0.625);
+  --translate-y-member: calc(var(--creature-unit-percentage) * -0.25);
+  --transform-origin-x: 50%;
+  --transform-origin-y: 80%;
+  --rotate-member: calc(var(--head-angle) * 1 / 2);
+  animation: eat__neck__body 0.125s ease-in-out backwards 0.2s;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__neck__head {
+  --rotate-member: calc(var(--head-angle) * 1 / 3);
+  animation: eat__neck__head 0.125s ease-in-out backwards 0.2s;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__head {
+  --translate-y-member: calc(var(--creature-unit-percentage) * 0.25);
+  --rotate-member: calc(var(--head-angle) * 1 / 6);
+  animation: eat__head 0.125s ease-in-out backwards 0.2s;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement--3 .gecko__body-part[class*=gecko__tail] {
+  animation: none;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .restart-screen {
+  animation: finish__use-restart-screen 1ms linear forwards 0.625s;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .fly__wrapper {
+  z-index: 0;
+  animation: eat__fly 0.0625s ease-in-out forwards 0.2s, reset-fly 1ms linear forwards 0.625s;
+  transition: none;
+}
+body:has(:is(.gecko-trap-3_base,
+    .gecko-trap-3_min200,
+    .gecko-trap-3_min250,
+    .gecko-trap-3_min300,
+    .gecko-trap-3_min350,
+    .gecko-trap-3_min450,
+    .gecko-trap-3_max166,
+    .gecko-trap-3_max150,
+    .gecko-trap-3_max125,
+    .gecko-trap-3_max100,
+    .gecko-trap-3_max75,
+    .gecko-trap-3_max66,
+    .gecko-trap-3_max50) span:hover) .gecko__placement {
+  animation: reset-gecko 1ms linear forwards 0.625s;
+}
+
+/* ----------- GECKO & FLY: (restart) post-attack logic and animation ---------- */
+.restart-screen {
+  display: grid;
+  place-items: center;
+  cursor: crosshair;
+}
+.restart-screen:hover {
+  z-index: 999999999;
+}
+.restart-screen:hover .restart-area {
+  animation: start-pulsing-restart-area 1ms linear forwards 1s, pulse-restart-area 1s ease-out infinite 1s;
+}
+body:has(.restart-screen:hover) {
+  --gecko-transition-duration: 1s;
+}
+.restart-screen .restart-area {
+  flex: none;
+  position: relative;
+  margin: auto;
+  background-color: transparent;
+  width: 33vmin;
+  height: 33vmin;
+  border-radius: 50%;
+  box-shadow: inset 0 0 15vmin skyblue;
+  transition: all 0s linear;
+  opacity: 0.25;
+  margin-top: 100dvh;
+  box-sizing: border-box;
+}
+.restart-screen .restart-area:hover {
+  margin-top: auto;
+  width: 100vmin;
+  height: 100vmin;
+  opacity: 0;
+  border-radius: 0;
+  animation: none;
+}
+.restart-screen:has(.restart-area:hover) {
+  animation: restart-screen-hover 1ms linear forwards 0.375s;
+}
+body:has(.restart-screen > .restart-area:hover) .fly__wrapper {
+  transition: all 0.375s ease-out, rotate 0.375s linear;
+  --x: 50;
+  --y: 50;
+  transform: none;
+  rotate: -50deg;
+  z-index: 4;
+}
+
+@keyframes restart-screen-hover {
+  to {
+    z-index: 0;
+  }
+}
+@keyframes start-pulsing-restart-area {
+  to {
+    margin-top: auto;
+  }
+}
+@keyframes pulse-restart-area {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.25;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+/* target browsers: */
+@supports (-webkit-appearance: none) and (stroke-color: transparent) {
+  /* CSS rules for Safari */
+  body {
+    --gecko-transition-delay: 0.1s;
+    --gecko-transition-duration: 0.25s;
+    cursor: crosshair;
+  }
+}
+@supports (-moz-appearance: none) {
+  /* CSS rules for Firefox */
+  body {
+    --gecko-transition-delay: 0.1s;
+    --gecko-transition-duration: 0.25s;
+    cursor: crosshair;
+  }
+
+  .gecko__placement--3 {
+    /* flip shadow direction on FF */
+    filter: drop-shadow(calc(var(--creature-unit) / 2.5) 0 calc(var(--creature-unit) / 3) rgba(0, 0, 0, 0.25));
+  }
+}
+/* Input device */
+@media (hover: none) and (pointer: coarse) {
+  /* CSS rules for touch-only devices */
+  body:has(.gecko-attack-area:hover) .restart-screen .restart-area {
+    margin-top: auto;
+    pointer-events: none;
+    opacity: 0;
+    animation: start-pulsing-restart-area 1ms linear forwards 1s, pulse-restart-area 1s ease-out infinite 1s;
+  }
+  body:has(.gecko-attack-area:hover) .fly__wrapper {
+    opacity: 0;
+    --x: 80;
+    --y: 130;
+    rotate: -180deg;
+    animation: none;
+  }
+
+  body:has(.restart-screen:hover) .position-aware-container .gecko__placement {
+    --x: 48;
+    --y: 60;
+  }
+  body:has(.restart-screen:hover) .position-aware-container .gecko__placement .gecko__body-part {
+    animation: none !important;
+  }
+  body:has(.restart-screen:hover) .fly__wrapper {
+    transition: none;
+    --x: 80;
+    --y: 130;
+    rotate: -180deg;
+  }
+
+  body:has(.restart-screen > .restart-area:hover) .gecko__placement {
+    --x: 50;
+    --y: 50;
+  }
+  body:has(.restart-screen > .restart-area:hover) .fly__wrapper {
+    transition: all 0.375s ease-out, rotate 0.375s linear;
+    --x: 50;
+    --y: 50;
+    transform: none;
+    rotate: -50deg;
+    z-index: 4;
+  }
+
+  .gecko__neck__body,
+.gecko__neck__head,
+.gecko__head {
+    --gecko-transition-duration: 0.25s;
+  }
+}
+@media (hover: hover) and (pointer: fine) {
+  /* CSS rules for mouse and trackpad devices */
+  /* Chrome Desktop */
+  @supports (-webkit-appearance: none) {
+    /* CSS for Chrome and Edge */
+    body .tip-wrapper {
+      display: none;
+    }
+  }
+  @supports (-webkit-appearance: none) and (stroke-color: transparent) {
+    /* CSS rules for Safari */
+    body .tip-wrapper {
+      display: flex;
+    }
+  }
+  @supports (-moz-appearance: none) {
+    /* CSS rules for Firefox */
+    body .tip-wrapper {
+      display: flex;
+    }
+    body .tip-wrapper .tip span:first-child {
+      font-size: 2em;
+      height: 1.25em;
+      padding: 0 0.375em;
+    }
+  }
+}
+@keyframes eat__shoulders {
+  to {
+    transform: translateY(calc(var(--creature-unit-percentage) * -0.125));
+  }
+}
+@keyframes eat__neck__body {
+  to {
+    --translate-y-member: calc(var(--creature-unit-percentage) * -0.375);
+  }
+}
+@keyframes eat__neck__head {
+  to {
+    --translate-y-member: calc(var(--creature-unit-percentage) * -0.5);
+  }
+}
+@keyframes eat__head {
+  to {
+    --translate-y-member: calc(var(--creature-unit-percentage) * -0.25);
+  }
+}
+@keyframes eat__fly {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes reset-fly {
+  to {
+    --x: 80;
+    --y: 130;
+    rotate: -180deg;
+  }
+}
+@keyframes reset-gecko {
+  to {
+    --x: 48;
+    --y: 35;
+  }
+}
+@keyframes finish__use-restart-screen {
+  to {
+    z-index: 999999999;
+  }
+}
+/* ------------------------------------------------------------ */
+/* ------------------------ Preload CSS ----------------------- */
+/* ------------------------------------------------------------ */
+body {
+  display: block !important;
+}

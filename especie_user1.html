@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cañán - EcoGuardian</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>    
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+        header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1030;
+            transition: background-color 0.5s ease-in-out;
+            height: 90px;
+            padding: 0 10%;
+            background-color: transparent;
+            background: url('img/fondo.jpg') no-repeat center center fixed;
+            font-weight: bold;
+        }
+        .navbar.solid {
+            background-color: white;
+        }
+        .navbar.solid .nav-link, .navbar.solid .navbar-brand {
+            color: white;
+        }
+        .navbar.solid .nav-link:hover {
+            color: #adff2f;
+        }
+        .profile-icon-btn {
+            display: flex;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-image: url('img/a.jpg');
+            background-size: cover;
+            background-position: center;
+            align-items: center;
+            justify-content: center;
+            border: none;
+        }
+        .navbar-nav {
+            align-items: center;
+            margin-right: 100px;
+        }
+        footer {
+            width: 100%;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px; /* Aumentado el margen superior */
+            background-color: rgb(156, 156, 156);
+        }
+        .footer-text {
+            margin: 5px 0;
+        }
+        .btn-signin {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .btn-signin:hover {
+            background-color: #45a049;
+        }
+        .custom-spacing {
+            margin-right: 50px;
+            margin-left: 50px;
+        }
+        .dropdown-menu {
+            width: 320px;
+            min-height: 260px;
+        }
+        .dropdown-menu::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 45px;
+            border: 10px solid transparent;
+            border-bottom-color: white;
+        }
+        .dropdown-header {
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+        }
+        .notification-card {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .notification-card .user-icon {
+            width: 40px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #bbb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+        }
+        .notification-card strong {
+            font-weight: bold;
+        }
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+        }
+        .media-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .media-content {
+            display: flex;
+            align-items: high;
+        }
+        .media-description {
+            margin-left: 20px;
+        }
+        .img-fluid {
+            max-width: 100%;
+            height: auto;
+        }
+        .btn-back {
+            margin-top: 20px;
+        }
+        .mt-5.pt-5 {
+            padding-top: 80px !important;
+        }
+        .container {
+            margin-top: 100px;
+            margin-bottom: 40px;
+        }
+        .catalog-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .main-image {
+            width: 100%;
+            height: auto; 
+        }
+        .download-btn {
+            width: 35px;
+            height: 35px; 
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar navbar-expand-lg navbar-dark fixed-top solid">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index_user.html">EcoGuardian</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index_user.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="foro_user.html">Foro</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="catalogo_user.html">Catálogo</a>
+                    </li>
+                    <li class="nav-item me-5">
+                        <a class="nav-link" href="noticias_user.html">Noticias</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <button class="profile-icon-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                            <li class="dropdown-header">Grupo 4</li>
+                            <li><a class="dropdown-item">Notificaciones</a></li>
+                            <div class="notification-card">
+                                <div class="user-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <p><strong>Juan Luján</strong> respondió a tu comentario en el foro.</p>
+                            </div>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" style="background-color: rgba(224, 12, 12, 0.795);" type="button" href="index.html">Cerrar Sesión</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <main class="container mt-5 pt-5" style="padding-bottom: 20px;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="flex-grow-1">Cañán</h1>
+            <button class="btn btn-primary download-btn" onclick="downloadPDF()">
+                <i class="fas fa-download"></i>
+            </button>
+        </div>
+        <div id="content-to-download">
+            <!-- Contenido existente -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <img src="img_animales/cañan.jpg" alt="Imagen de la Especie" class="img-fluid main-image">
+                </div>
+                <div class="col-md-6">
+                    <h3>Descripción de la Especie</h3>
+                    <p>Lagarto de tamaño mediano que se destaca por su cuerpo robusto y su capacidad de camuflaje gracias a su piel áspera con manchas o puntos oscuros sobre un fondo marrón o gris. Este reptil es diurno y se alimenta principalmente de insectos y otros pequeños invertebrados. Su reproducción es ovípara, lo que significa que pone huevos.</p>
+                    <h3>Hábitat</h3>
+                    <p>Este lagarto se encuentra en Sudamérica, especialmente en áreas de Perú. Es conocido por su adaptabilidad a diversos ambientes, incluyendo zonas áridas y semiáridas.</p>
+                    <h3>Conservación</h3>
+                    <p>La conservación del cañán se enfoca en acciones específicas como la protección de áreas clave donde esta especie habita, para preservar su entorno natural y mantener las condiciones necesarias para su supervivencia. Además, se están implementando esfuerzos para reducir los impactos del desarrollo humano y la degradación ambiental en estos territorios.</p>
+                </div>
+            </div>
+            <!-- Catálogo de Imágenes -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <img src="img_animales/cañan2.jpg" alt="Imagen 1" class="img-fluid catalog-image">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <img src="img_animales/cañan3.jpg" alt="Imagen 2" class="img-fluid catalog-image">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <img src="img_animales/cañan4.jpg" alt="Imagen 3" class="img-fluid catalog-image">
+                </div>
+                <div class="col-md-3 mb-3">
+                    <img src="img_animales/cañan5.jpg" alt="Imagen 4" class="img-fluid catalog-image">
+                </div>
+            </div>
+            <!-- Apartado para el Juego -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h3>Juego</h3><br>
+                    <iframe src="juego-cañan.html" style="width: 100%; height: 800px; border: none;"></iframe>                  
+                </div>
+            </div>
+        </div>
+        <button onclick="window.history.back();" class="btn btn-primary btn-back">Volver</button>
+    </main>
+    <footer class="text-center mt-4 mb-4">
+        <p class="footer-text">EcoGuardian</p>
+        <p class="footer-text">Dirección: Av. América Sur 3145, Trujillo, La Libertad, Perú</p>
+        <p class="footer-text">Email de contacto: ecoguardian@upao.edu.pe</p>
+        <p class="footer-text">Horario de atención: Lunes a viernes, de 9:00 am a 17:00 pm</p>
+        <br>
+        <p class="footer-text">Todos los derechos reservados ©2024</p>
+    </footer>
+    <!-- Modal para la vista previa de las imágenes -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Cañán</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="previewImage" src="" alt="Vista Previa de la Imagen" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            setTimeout(() => {
+                var header = document.querySelector("header");
+                header.classList.remove("solid");
+                header.classList.add("transparent");
+            }, 500);
+        });
+
+        document.addEventListener("scroll", function() {
+            var header = document.querySelector("header");
+            if (window.scrollY > 50) {
+                header.classList.remove("transparent");
+                header.classList.add("solid");
+            } else {
+                header.classList.add("transparent");
+                header.classList.remove("solid");
+            }
+        });
+
+        function downloadPDF() {
+            html2canvas(document.getElementById('content-to-download'), {
+                useCORS: true,
+                onclone: (document) => {
+                    let imgs = document.getElementsByTagName('img');
+                    for (let img of imgs) {
+                        img.setAttribute('crossOrigin', 'anonymous');
+                    }
+                }            
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new window.jspdf.jsPDF({
+                    orientation: 'portrait',
+                    unit: 'px',
+                    format: [canvas.width, canvas.height]
+                });
+                pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height);
+                pdf.save('detalle-especie.pdf');
+            }).catch(err => {
+                console.error("Error al generar el PDF: ", err);
+            });
+        }
+
+        // Función para mostrar la vista previa de la imagen
+        function showPreview(src) {
+            const previewImage = document.getElementById('previewImage');
+            previewImage.src = src;
+            const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+            imageModal.show();
+        }
+
+        // Añadir event listeners a las imágenes del catálogo y la imagen principal
+        document.addEventListener('DOMContentLoaded', function () {
+            const catalogImages = document.querySelectorAll('.catalog-image');
+            catalogImages.forEach(image => {
+                image.addEventListener('click', function () {
+                    showPreview(this.src);
+                });
+            });
+            
+            const mainImage = document.querySelector('.main-image');
+            mainImage.addEventListener('click', function () {
+                showPreview(this.src);
+            });
+        });
+    </script>
+</body>
+</html>
